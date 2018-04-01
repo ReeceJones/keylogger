@@ -1,6 +1,4 @@
 #include <iostream>
-#include <fstream>
-#include <string>
 #include <Windows.h>
 
 //array containing keystates
@@ -10,6 +8,8 @@ LPWSTR buf;
 
 LRESULT CALLBACK KeyboardProc(int code, WPARAM wParam, LPARAM lParam)
 {
+	if (code < 0)
+		return CallNextHookEx(NULL, code, wParam, lParam);
 	auto kp = (KBDLLHOOKSTRUCT*)lParam;
 	ToUnicode(kp->vkCode, kp->scanCode, keyboardState, buf, 1, 0);
 	if (kp->flags & LLKHF_UP || wParam == WM_KEYUP)
@@ -20,7 +20,7 @@ LRESULT CALLBACK KeyboardProc(int code, WPARAM wParam, LPARAM lParam)
 int main()
 {
 	//allocate 1 byte for our buffer
-	//1 byte because we don't care about unicode characters
+	//1 byte because we don't care about unicode characters (at least not all of them)
 	buf = (LPWSTR)malloc(sizeof(LPWSTR));
 	//set our windows hook for our keyboard
 	SetWindowsHookEx(WH_KEYBOARD_LL, KeyboardProc, 0, 0);
