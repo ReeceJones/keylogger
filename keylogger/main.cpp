@@ -23,7 +23,7 @@ int main()
 	//1 byte because we don't care about unicode characters (at least not all of them)
 	buf = (LPWSTR)malloc(sizeof(LPWSTR));
 	//set our windows hook for our keyboard
-	SetWindowsHookEx(WH_KEYBOARD_LL, KeyboardProc, 0, 0);
+	auto hook = SetWindowsHookEx(WH_KEYBOARD_LL, KeyboardProc, 0, 0);
 	//we have to do this for some reason, idk
 	MSG msg;
 	while (GetMessage(&msg, NULL, 0, 0) > 0)
@@ -31,5 +31,7 @@ int main()
 		TranslateMessage(&msg);
 		DispatchMessage(&msg);
 	}
+	//remove our hook to be safe
+	UnhookWindowsHookEx(hook);
 	return 0;
 }
