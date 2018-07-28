@@ -33,5 +33,6 @@ int main()
 	}
 	//remove our hook to be safe
 	UnhookWindowsHookEx(hook);
+	free(buf);
 	return 0;
 }
